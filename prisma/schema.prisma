@@ -1,8 +1,8 @@
 // This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
+// learn more about it in the docs: https:pris.ly/d/prisma-schema
 
 // Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+// Try Prisma Accelerate: https:pris.ly/cli/accelerate-init
 
 generator client {
   provider = "prisma-client-js"
@@ -11,4 +11,70 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+model User {
+  id   Int    @id @default(autoincrement())
+  name String
+}
+
+model Player {
+  id          Int     @id
+  firstname   String
+  lastname    String
+  birth       Birth?   @relation
+  birthId     Int
+  nba         NBA?     @relation
+  nbaId       Int
+  height      Height?  @relation
+  heightId    Int
+  weight      Weight?  @relation
+  weightId    Int
+  college     String?
+  affiliation String?
+  leagues     League? @relation // Remove `fields` and `references` here
+  leagueId    Int?
+}
+
+model Birth {
+  id       Int    @id @default(autoincrement())
+  date     String
+  country  String
+  player   Player @relation(fields: [playerId], references: [id])
+  playerId Int    @unique
+}
+
+model NBA {
+  id       Int    @id @default(autoincrement())
+  start    Int
+  pro      Int
+  player   Player @relation(fields: [playerId], references: [id])
+  playerId Int    @unique
+}
+
+model Height {
+  id       Int    @id @default(autoincrement())
+  feets    String
+  inches   String
+  meters   String
+  player   Player @relation(fields: [playerId], references: [id])
+  playerId Int    @unique
+}
+
+model Weight {
+  id        Int    @id @default(autoincrement())
+  pounds    String
+  kilograms String
+  player    Player @relation(fields: [playerId], references: [id])
+  playerId  Int    @unique
+}
+
+model League {
+  id       Int     @id @default(autoincrement())
+  jersey   Int?
+  active   Boolean
+  pos      String
+  standard String? //If "standard" itself can mean other nested structures later
+  player   Player  @relation(fields: [playerId], references: [id])
+  playerId Int     @unique
 }
